@@ -93,23 +93,13 @@ st.header("Real-Time Classification with Webcam")
 if "streaming" not in st.session_state:
     st.session_state.streaming = False
 
-# 웹캠 스트리밍 시작 버튼
-start_button = st.button("Start Webcam")
-if start_button:
-    st.session_state.streaming = True
-
-# 웹캠 스트리밍 중지 버튼
-stop_button = st.button("Stop Webcam")
-if stop_button:
-    st.session_state.streaming = False
-
 # 웹캠 스트리밍 상태에 따른 처리
 if st.session_state.streaming:
     # OpenCV를 사용하여 웹캠 영상 읽기
     cap = cv2.VideoCapture(camera_index)
     stframe = st.empty()  # Streamlit에서 사용할 빈 이미지 프레임 설정
     
-    while st.session_state.streaming:
+    while True:
         success, frame = cap.read()
         if not success:
             st.error("웹캠에서 프레임을 읽어올 수 없습니다.")
@@ -127,5 +117,17 @@ if st.session_state.streaming:
         # Streamlit을 통해 이미지 표시
         stframe.image(annotated_frame, channels="RGB")
 
+        # 종료 조건 설정 (웹캠 스트리밍 중지)
+        if not st.session_state.streaming:
+            break
+
     cap.release()  # 웹캠 해제
     st.write("Webcam streaming stopped.")
+
+# 웹캠 스트리밍 시작 버튼
+if st.button("Start Webcam"):
+    st.session_state.streaming = True
+
+# 웹캠 스트리밍 중지 버튼
+if st.button("Stop Webcam"):
+    st.session_state.streaming = False
