@@ -34,7 +34,7 @@ with col2:
 st.write("""
 위의 이미지는 학습된 데이터셋과 YOLOv8 모델의 구조를 나타냅니다.
 실시간 웹캠에서 가위✌, 바위✊, 보🖐 중 하나를 내면
-yolov8 모델을 통해 분류할 수 있습니다 !✨
+YOLOv8 모델을 통해 분류할 수 있습니다 !✨
 """)
 
 # 웹캠 선택 및 설정
@@ -69,7 +69,7 @@ if uploaded_file is not None:
     # 탐지된 결과 시각화
     annotated_frame = results[0].plot()
 
-    # BGR 이미지를 RGB로 변환 (OpenCV는 BGR 형식이므로, RGB 형식으로 변환 필요)
+    # BGR 이미지를 RGB로 변환
     annotated_frame = cv2.cvtColor(annotated_frame, cv2.COLOR_BGR2RGB)
 
     # Streamlit을 통해 탐지된 이미지 표시
@@ -105,11 +105,12 @@ if stop_button:
 
 # 웹캠 스트리밍 상태에 따른 처리
 if st.session_state.streaming:
-    webcamera = st.camera_input(camera_index)
+    # OpenCV를 사용하여 웹캠 영상 읽기
+    cap = cv2.VideoCapture(camera_index)
     stframe = st.empty()  # Streamlit에서 사용할 빈 이미지 프레임 설정
     
     while st.session_state.streaming:
-        success, frame = webcamera.read()
+        success, frame = cap.read()
         if not success:
             st.error("웹캠에서 프레임을 읽어올 수 없습니다.")
             break
@@ -120,11 +121,11 @@ if st.session_state.streaming:
         # 탐지된 결과 시각화
         annotated_frame = results[0].plot()
         
-        # BGR 이미지를 RGB로 변환 (OpenCV는 BGR 형식이므로, RGB 형식으로 변환 필요)
+        # BGR 이미지를 RGB로 변환
         annotated_frame = cv2.cvtColor(annotated_frame, cv2.COLOR_BGR2RGB)
 
         # Streamlit을 통해 이미지 표시
         stframe.image(annotated_frame, channels="RGB")
 
-    webcamera.release()
+    cap.release()  # 웹캠 해제
     st.write("Webcam streaming stopped.")
