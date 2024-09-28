@@ -48,57 +48,15 @@ model = YOLO('./custom_train/yolov8n_rock_paper_scissors.pt')  # 모델 파일 �
 st.sidebar.text("Model Classes:")
 st.sidebar.write(model.names)
 
-# 업로드된 이미지 분류 섹션
-st.sidebar.header("Image Upload for Classification")
-uploaded_file = st.sidebar.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
-
-if uploaded_file is not None:
-    # 업로드된 이미지를 PIL로 열기
-    image = Image.open(uploaded_file)
-
-    # 이미지를 OpenCV 형식으로 변환
-    frame = np.array(image)
-    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-
-    # 업로드된 이미지 표시
-    st.image(image, caption="Uploaded Image", use_column_width=True)
-
-    # 객체 탐지 (Rock, Paper, Scissors 클래스 탐지)
-    results = model.predict(frame, classes=[0, 1, 2], conf=0.4, imgsz=640)
-
-    # 탐지된 결과 시각화
-    annotated_frame = results[0].plot()
-
-    # BGR 이미지를 RGB로 변환
-    annotated_frame = cv2.cvtColor(annotated_frame, cv2.COLOR_BGR2RGB)
-
-    # Streamlit을 통해 탐지된 이미지 표시
-    st.image(annotated_frame, caption="Detected Image", use_column_width=True)
-
-    # 감지된 객체 목록 표시
-    st.subheader("Detected Objects")
-    if len(results[0].boxes) > 0:
-        for box in results[0].boxes:
-            cls = int(box.cls[0])
-            label = model.names[cls]
-            confidence = box.conf[0]
-            st.write(f"Detected {label} with {confidence:.2f} confidence.")
-    else:
-        st.write("No objects detected.")
-
-# 웹캠 스트리밍
-st.header("Real-Time Classification with Webcam")
-
 # 웹캠 스트리밍 시작 및 중지 상태를 관리하는 변수
 if "streaming" not in st.session_state:
     st.session_state.streaming = False
 
 # 웹캠 스트리밍 상태에 따른 처리
 if st.session_state.streaming:
-    # OpenCV를 사용하여 웹캠 영상 읽기
     cap = cv2.VideoCapture(camera_index)
     stframe = st.empty()  # Streamlit에서 사용할 빈 이미지 프레임 설정
-    
+
     while True:
         success, frame = cap.read()
         if not success:
@@ -110,7 +68,7 @@ if st.session_state.streaming:
 
         # 탐지된 결과 시각화
         annotated_frame = results[0].plot()
-        
+
         # BGR 이미지를 RGB로 변환
         annotated_frame = cv2.cvtColor(annotated_frame, cv2.COLOR_BGR2RGB)
 
