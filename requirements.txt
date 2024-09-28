@@ -1,12 +1,13 @@
 # 필수 패키지
 streamlit==1.38.0
-ultralytics @ git+https://github.com/ultralytics/ultralytics@03dc859c8e99bd8acdc423fb56ce51ecc0bdbe79
+ultralytics
 torch==2.4.1
 opencv-python==4.10.0.84
 pandas==2.2.3
 numpy==1.26.4
 
+
 # 선택적 패키지 (필요한 경우 추가)
-Pillow==10.4.0
+Pillow
 tqdm==4.66.5
 opencv-python-headless==4.10.0.84
